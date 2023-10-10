@@ -2,6 +2,7 @@
 
 import { signIn } from "next-auth/react";
 import { useState } from "react"
+import toast from "react-hot-toast";
 
 export default function Login() {
     const [data, setData] = useState({
@@ -13,8 +14,15 @@ export default function Login() {
         console.log(data);
         e.preventDefault();
         signIn('credentials', {...data, redirect: false})
-        .then(() => alert('Login success!!!'))
-        .catch(() => alert('Login failure'));
+        .then((callback) => {
+            if(callback?.error){
+                toast.error(callback.error);
+            }
+            if(callback?.ok && !callback?.error){
+                toast.success("Login successful");
+            }
+
+        });
     }
 
     return (
@@ -85,6 +93,14 @@ export default function Login() {
                             </button>
                         </div>
                     </form>
+
+                    <button onClick={() => signIn('github')} className="text-slate-200 bg-slate-800 border-slate-300 w-full p-2 mt-3 rounded-lg">
+                        Login With Github
+                    </button>
+
+                    <button onClick={() => signIn('google')} className="text-slate-200 bg-slate-800 border-slate-300 w-full p-2 mt-3 rounded-lg">
+                        Login With Google
+                    </button>
 
                     <p className="mt-10 text-center text-sm text-gray-500">
                         Not a member?{' '}
